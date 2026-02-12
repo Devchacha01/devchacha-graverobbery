@@ -1,54 +1,93 @@
 # 🪦 devchacha-graverobbery
 
-A grave robbery script for RedM using **ox_lib**, **ox_target** (Third Eye), and **rsg-core**.
+A grave robbery & prayer script for RedM using **ox_lib**, **ox_target**, and **rsg-core**.
+
+---
 
 ## Features
 
-- **Third Eye Interaction** — Look at any grave/gravestone prop and use ox_target to rob it
-- **Digging Animation** — Full gravedigger animation with an attached shovel prop (`p_shovel02x`)
-- **Skill Check** — ox_lib skill check before digging begins
-- **Weighted Loot System** — Configurable weighted random rewards (coins, rings, gems, gold bars, etc.)
-- **Cash Rewards** — Random cash found alongside items
+- **Rob Grave** — Dig up graves with a shovel animation and loot valuables
+- **Pray** — Kneel and pay respects with random prayer animations (no loot)
+- **Dirt Pile Visual** — A dirt pile prop spawns after robbing, showing the grave has been disturbed
+- **Permanently Looted** — Once any player robs a grave, it stays locked for everyone until server restart
+- **Robbery Ledger** — Rare chance to find the book needed to start house robberies
+- **Weighted Loot** — Configurable weighted random rewards (coins, rings, necklaces, gems, etc.)
+- **Skill Check** — ox_lib skill check before digging
 - **Civilian Snitching** — Nearby NPCs may report you to the law
-- **Police Alerts** — Law enforcement players receive notifications + a map blip with GPS route to the crime
-- **Cooldowns** — Per-player, per-grave cooldown (configurable, default 30 min)
-- **Night Only Mode** — Optionally restrict grave robbing to nighttime (22:00 - 05:00)
-- **100+ Grave Models** — Supports all gravestone, grave mound, grave marker, and story character grave props
+- **Police Alerts** — Law enforcement gets a notification + map blip with GPS route
+- **Night Only** — Optionally restrict grave robbing to nighttime (22:00 - 05:00)
+- **100+ Grave Models** — Supports all gravestone props in RDR2
+
+---
 
 ## Dependencies
 
 - [rsg-core](https://github.com/Starter-Framework/rsg-core)
 - [ox_lib](https://github.com/overextended/ox_lib)
 - [ox_target](https://github.com/overextended/ox_target)
-- [oxmysql](https://github.com/overextended/oxmysql)
+
+---
 
 ## Installation
 
 1. Place `devchacha-graverobbery` in your `resources` folder
 2. Add `ensure devchacha-graverobbery` to your `server.cfg`
-3. Configure `config.lua` to your liking
+3. Copy items from `shared/items.lua` into `rsg-core/shared/items.lua` (skip duplicates)
+4. Copy images from `html/images/` into `rsg-inventory/html/images/`
 
-## Configuration Highlights
-
-| Setting | Default | Description |
-|---|---|---|
-| `Config.NightOnly` | `true` | Only allow grave robbing at night |
-| `Config.Cooldown` | `1800` (30 min) | Per-grave cooldown in seconds |
-| `Config.Police.AlertChance` | `40%` | Chance a nearby NPC reports you |
-| `Config.Police.BlipDuration` | `300` (5 min) | How long the police blip stays on map |
-| `Config.Digging.Duration` | `15000` (15 sec) | How long the digging progress bar takes |
-| `Config.RequiredItem` | `nil` | Set to `'shovel'` to require an item |
-| `Config.Loot.chance` | `75%` | Chance to find anything in the grave |
+---
 
 ## How It Works
 
-1. Player approaches any grave prop in the world
-2. **Third Eye** (ox_target) shows "Rob Grave" option
-3. Player passes a **skill check**
-4. **Digging animation** plays with a shovel attached to the player's hand
-5. On success, player receives **random loot** (weighted) and possibly **cash**
-6. If a nearby NPC civilian sees you, there's a chance they **snitch to the law**
-7. Law enforcement players get a **notification**, **map blip**, and **GPS route** to the grave
+### Robbing
+1. Third Eye a grave → select **Rob Grave**
+2. Pass the skill check
+3. Digging animation plays with shovel attached to hand
+4. Loot is given + a dirt pile spawns at the grave
+5. Grave is permanently locked for all players
+6. Nearby NPCs may snitch to the law
+
+### Praying
+1. Third Eye a grave → select **Pray**
+2. Random prayer/mourning animation plays
+3. Press **Backspace** to stop
+4. No loot — works on robbed graves too
+
+### Police
+- Law jobs receive notification + blip with GPS route
+- Blip auto-removes after 5 minutes (configurable)
+
+---
+
+## File Structure
+
+```
+devchacha-graverobbery/
+├── fxmanifest.lua
+├── config.lua
+├── client/main.lua
+├── server/main.lua
+├── shared/items.lua
+├── locales/en.json
+├── html/images/
+└── README.md
+```
+
+---
+
+## Loot Table
+
+| Category | Items |
+|---|---|
+| **Coins** | Half Penny, 1787 Penny, 1789 Penny, 1792 Nickel, Half Dime, 1792 Quarter (x2), Gold Dollar, Five Dollar, Gold Quarter, Half Eagle, Gold Eagle, New Yorke Token |
+| **Rings** | Silver Ring, Wedding Ring, Platinum Ring |
+| **Necklaces** | Pearl, Pearl Pendant, Gold Ring, Gold Cross, Ancient, Blakely Miniature, Amethyst Braxton, Amethyst Richelieu |
+| **Gems** | Diamond, Ruby, Sapphire, Emerald |
+| **Valuables** | Gold Bar, Antique Jewelry Box, Golden Chalice, Silver Pocket Watch |
+| **Misc** | Gold Tooth, Cigar |
+| **Special** | 📕 Robbery Ledger *(rare — needed for house robberies)* |
+
+---
 
 ## Credits
 

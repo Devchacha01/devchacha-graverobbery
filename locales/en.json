@@ -9,7 +9,7 @@
     "skill_failed": "You fumbled with the shovel... Try again.",
     "someone_saw": "A local saw you disturbing the dead! They're reporting you to the law!",
     "praying_start": "You kneel and pay your respects...",
-    "praying_stop_hint": "Press [ESC] to stop praying",
+    "praying_stop_hint": "Press [Backspace] to stop praying",
     "police_alert_title": "Law Official Alert",
     "police_alert_msg": "CRIME REPORTED: A local reports someone is robbing graves! Ride out and investigate!",
     "police_blip_name": "Grave Robbery Reported"

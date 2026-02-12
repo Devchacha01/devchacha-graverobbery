@@ -1,14 +1,8 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 lib.locale()
 
--- ═══════════════════════════════════════════════════════════
--- LOOTED GRAVES  (global, resets on server restart)
--- ═══════════════════════════════════════════════════════════
-local LootedGraves = {}   -- [cooldownKey] = true
+local LootedGraves = {}
 
--- ═══════════════════════════════════════════════════════════
--- CHECK IF GRAVE IS ALREADY LOOTED
--- ═══════════════════════════════════════════════════════════
 lib.callback.register('devchacha-graverobbery:server:CheckCooldown', function(source, cooldownKey)
     if LootedGraves[cooldownKey] then
         return true
@@ -16,9 +10,6 @@ lib.callback.register('devchacha-graverobbery:server:CheckCooldown', function(so
     return false
 end)
 
--- ═══════════════════════════════════════════════════════════
--- WEIGHTED RANDOM ITEM SELECTION
--- ═══════════════════════════════════════════════════════════
 local function GetWeightedReward(rewards)
     local totalWeight = 0
     for _, r in ipairs(rewards) do
@@ -35,14 +26,10 @@ local function GetWeightedReward(rewards)
         end
     end
 
-    -- Fallback
     local fallback = rewards[1]
     return fallback.item, math.random(fallback.min or 1, fallback.max or 1)
 end
 
--- ═══════════════════════════════════════════════════════════
--- ROB GRAVE  (gives loot + sets cooldown)
--- ═══════════════════════════════════════════════════════════
 RegisterNetEvent('devchacha-graverobbery:server:RobGrave', function(cooldownKey)
     local src = source
     local Player = RSGCore.Functions.GetPlayer(src)
@@ -51,38 +38,31 @@ RegisterNetEvent('devchacha-graverobbery:server:RobGrave', function(cooldownKey)
     local loot = Config.Loot
     if not loot then return end
 
-    -- Mark grave as permanently looted (until server restart)
     LootedGraves[cooldownKey] = true
 
-    -- Consume required item if configured
     if Config.RequiredItem and Config.ConsumeItem then
         Player.Functions.RemoveItem(Config.RequiredItem, 1)
         TriggerClientEvent('inventory:client:ItemBox', src, RSGCore.Shared.Items[Config.RequiredItem], "remove")
     end
 
-    -- Roll for loot
     local roll = math.random(100)
     if roll > (loot.chance or 75) then
         TriggerClientEvent('ox_lib:notify', src, { type = 'error', description = 'Nothing but dirt and bones...' })
         return
     end
 
-    -- Pick a weighted random reward
     local item, amount = GetWeightedReward(loot.rewards)
 
-    -- Hardcap gold bars to 1
     if item == 'gold_bar' and amount > 1 then
         amount = 1
     end
 
-    -- Validate item exists in shared items
     if not RSGCore.Shared.Items[item] then
         print("[GraveRobbery] WARNING: Invalid item in config: " .. tostring(item))
         TriggerClientEvent('ox_lib:notify', src, { type = 'error', description = "Error: Item '" .. tostring(item) .. "' not registered!" })
         return
     end
 
-    -- Give item
     Player.Functions.AddItem(item, amount)
     TriggerClientEvent('inventory:client:ItemBox', src, RSGCore.Shared.Items[item], "add")
 
@@ -92,7 +72,6 @@ RegisterNetEvent('devchacha-graverobbery:server:RobGrave', function(cooldownKey)
         description = 'You found ' .. amount .. 'x ' .. label
     })
 
-    -- Cash reward
     if loot.cash then
         local cashAmount = math.random(loot.cash.min, loot.cash.max)
         if cashAmount > 0 then
@@ -105,9 +84,6 @@ RegisterNetEvent('devchacha-graverobbery:server:RobGrave', function(cooldownKey)
     end
 end)
 
--- ═══════════════════════════════════════════════════════════
--- ALERT POLICE  (triggered by client when a civilian sees)
--- ═══════════════════════════════════════════════════════════
 RegisterNetEvent('devchacha-graverobbery:server:AlertPolice', function(coords)
     local players = RSGCore.Functions.GetRSGPlayers()
 
