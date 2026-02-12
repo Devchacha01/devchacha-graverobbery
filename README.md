@@ -1,5 +1,7 @@
 # 🪦 devchacha-graverobbery
 
+![Banner](html/images/banner.png)
+
 A grave robbery & prayer script for RedM using **ox_lib**, **ox_target**, and **rsg-core**.
 
 ---
